@@ -475,7 +475,7 @@ void const VectorData< t_VectorType, t_Traits >::writeSupport(
 {
 
 	unsigned int const trainingSize = m_trainingSize;
-	std::cout << "Writting Support from Kernel Vector Data" << std::endl;
+	std::cout << "Write Support from Kernel Vector Data" << std::endl;
 	std::cout << filename << std::endl;
 	double accumulator = 0;
 
