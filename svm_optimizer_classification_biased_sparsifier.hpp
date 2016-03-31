@@ -91,6 +91,14 @@ struct Sparsifier : public Base {
 	virtual unsigned int const ValidationSize() const;
 
 	virtual void GetAlphas( double* const begin, double* const end ) const;
+
+	virtual void WriteSupport(std::string filename){
+
+		std::cout << "Get Support from Biased Sparsifier" << std::endl;
+		m_pKernel->writeSupport(m_alphas.get(),this->Bias(),filename);//pasar m_bias
+
+	}
+
 	virtual double const Bias() const;
 
 	virtual double const NormSquared() const;
