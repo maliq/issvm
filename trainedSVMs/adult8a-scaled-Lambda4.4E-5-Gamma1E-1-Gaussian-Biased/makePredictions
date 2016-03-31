@@ -1,0 +1,11 @@
+./../../issvm_evaluate -f ../../../a8a.scaled.train.01.txt -i mySVM_Scaled_SMO_100 -o predictions_train_SVM_Scaled_SMO_100.txt
+./../../issvm_evaluate -f ../../../a8a.scaled.test.01.txt -i mySVM_Scaled_SMO_100 -o predictions_test_SVM_Scaled_SMO_100.txt
+
+./../../issvm_evaluate -f ../../../a8a.scaled.train.01.txt -i mySVM_Scaled_SMO_1000 -o predictions_train_SVM_Scaled_SMO_1000.txt
+./../../issvm_evaluate -f ../../../a8a.scaled.test.01.txt -i mySVM_Scaled_SMO_1000 -o predictions_test_SVM_Scaled_SMO_1000.txt
+
+./../../issvm_evaluate -f ../../../a8a.scaled.train.01.txt -i mySVM_Scaled_SMO_10000 -o predictions_train_SVM_Scaled_SMO_10000.txt
+./../../issvm_evaluate -f ../../../a8a.scaled.test.01.txt -i mySVM_Scaled_SMO_10000 -o predictions_test_SVM_Scaled_SMO_10000.txt
+
+./../../issvm_evaluate -f ../../../a8a.scaled.train.01.txt -i mySVM_Scaled_SMO_100000 -o predictions_train_SVM_Scaled_SMO_100000.txt
+./../../issvm_evaluate -f ../../../a8a.scaled.test.01.txt -i mySVM_Scaled_SMO_100000 -o predictions_test_SVM_Scaled_SMO_100000.txt

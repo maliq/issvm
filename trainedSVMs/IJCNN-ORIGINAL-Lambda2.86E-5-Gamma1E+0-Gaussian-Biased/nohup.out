@@ -1,0 +1,7 @@
+./../../issvm_optimize: error while loading shared libraries: libboost_program_options.so.1.58.0: cannot open shared object file: No such file or directory
+Get Support from Biased SMO
+Write Support from Kernel Vector Data
+IJCNN_SVM_SMO_BIASED_100000-SupportSet.txt
+Get Support from Biased SMO
+Write Support from Kernel Vector Data
+IJCNN_SVM_SMO_BIASED_1000000-SupportSet.txt

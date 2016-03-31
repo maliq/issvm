@@ -1,0 +1,11 @@
+echo "Results 100 ITS"
+python ../../computeMissRateFile.py predictions_train_SVM_Scaled_SMO_100.txt ../../../a8a.scaled.train.01.txt predictions_test_SVM_Scaled_SMO_100.txt ../../../a8a.scaled.test.01.txt mySVM_Scaled_SMO_100-SupportSet.txt 100 ADULT_SCALED_SMO_BIASED.txt
+
+echo "Results 1000 ITS"
+python ../../computeMissRateFile.py predictions_train_SVM_Scaled_SMO_1000.txt ../../../a8a.scaled.train.01.txt predictions_test_SVM_Scaled_SMO_1000.txt ../../../a8a.scaled.test.01.txt mySVM_Scaled_SMO_1000-SupportSet.txt 1000 ADULT_SCALED_SMO_BIASED.txt
+
+echo "Results 10000 ITS"
+python ../../computeMissRateFile.py predictions_train_SVM_Scaled_SMO_10000.txt ../../../a8a.scaled.train.01.txt predictions_test_SVM_Scaled_SMO_10000.txt ../../../a8a.scaled.test.01.txt mySVM_Scaled_SMO_10000-SupportSet.txt 10000 ADULT_SCALED_SMO_BIASED.txt
+
+echo "Results 100000 ITS"
+python ../../computeMissRateFile.py predictions_train_SVM_Scaled_SMO_100000.txt ../../../a8a.scaled.train.01.txt predictions_test_SVM_Scaled_SMO_100000.txt ../../../a8a.scaled.test.01.txt mySVM_Scaled_SMO_100000-SupportSet.txt 100000 ADULT_SCALED_SMO_BIASED.txt

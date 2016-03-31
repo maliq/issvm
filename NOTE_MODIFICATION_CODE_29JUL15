@@ -1,0 +1,32 @@
+I had to implement a method to write the support set of a SVM in a format readable from our code. 
+To achieve this goal it was necessary to understand a bit the structure of the ISSVM code.
+The main classes to interact are the different specializations of an "SVM Optimizer".
+These classes are based on a main template named "SVM Optimizer Base".
+The specialization takes place in running time, depending on the options passed to the program.
+For instance, if you want to run SMO as a solver, with "b" in the decision function, the "SVM Optimizer Base" specializes in running time to "SVM Optimizer Classification Biased SMO".  
+
+I thus added a new method to the "SVM Optimizer Base" named writeSupport(string filename) which is declared virtual but not pure virtual.
+I cannot properly implement the method in "SVM Optimizer Base" because the dataset is not a declared member of this class.
+Virtual allows specializations of the "SVM Optimizer Base" to implement the desired function.
+I made it not pure virtual just because I did not wanted to be forced to implement the method in all the children.
+Thus, I had to leave a dummy implementation of the function in "SVM Optimizer Base" wich is just printing a warning message. 
+
+I properly implemented (overrided) the method in the next specializations:
+
+* "SVM Optimizer Classification Unbiased SMO"
+
+In this class, the data is handled inside the member "Kernel". This member is of a specialized type of "SVM Kernel Base". 
+I added a method named writeSupport(string filename) to the class kernel "SVM Kernel Base" and declared it to be pure virtual.
+In this way I was constrained to implement it in any specialization. It seems that there was only two specializations.
+
+- "SVM Kernel Simple"
+- "SVM Kernel Vector Data"
+
+I properly implemented the function to write the support set of a file in both clases.
+BTW, the difference is just that "SVM Kernel Vector Data" allows you to "keep" some convenient quantities precalculated to speed up a bit kernel computations.
+
+
+Conclusion: The desired function is working for the class "SVM Optimizer Classification Biased SMO". We have to "copy" the implementation for any other specialization: "SVM Optimizer Classification Biased SMO", "SVM Optimizer Classification Biased SBP" etc
+
+
+
