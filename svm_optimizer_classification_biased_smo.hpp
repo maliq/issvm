@@ -91,8 +91,7 @@ struct SMO : public Base {
 	virtual void WriteSupport(std::string filename){
 
 		std::cout << "Get Support from Biased SMO" << std::endl;
-		FindLosses();
-		m_pKernel->writeSupport(m_alphas.get(),m_bias,filename);//pasar m_bias 
+		m_pKernel->writeSupport(m_alphas.get(),this->Bias(),filename);//pasar m_bias 
 
 	}
 
