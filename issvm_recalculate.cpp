@@ -32,7 +32,6 @@
 #include "helpers.h"
 
 #include <boost/iostreams/filtering_stream.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/program_options.hpp>
 #include <boost/shared_ptr.hpp>
@@ -90,7 +89,6 @@ int main( int argc, char* argv[] ) {
 				if ( inputFile.fail() )
 					throw std::runtime_error( "Unable to open input file" );
 				boost::iostreams::filtering_streambuf< boost::iostreams::input > inputStream;
-				inputStream.push( boost::iostreams::gzip_decompressor() );
 				inputStream.push( inputFile );
 				boost::archive::binary_iarchive inputArchive( inputStream );
 				inputArchive >> pOptimizer;
@@ -102,7 +100,6 @@ int main( int argc, char* argv[] ) {
 				if ( outputFile.fail() )
 					throw std::runtime_error( "Unable to open output file" );
 				boost::iostreams::filtering_streambuf< boost::iostreams::output > outputStream;
-				outputStream.push( boost::iostreams::gzip_compressor() );
 				outputStream.push( outputFile );
 				boost::archive::binary_oarchive outputArchive( outputStream );
 				outputArchive << pOptimizer;
