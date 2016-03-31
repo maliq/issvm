@@ -73,6 +73,7 @@ struct Base {
 	virtual double const Bias() const;
 
 	virtual unsigned int const Support() const;
+	virtual double const L1Norm() const;
 	virtual double const NormSquared() const = 0;
 
 	virtual void GetValidationResponses( double* const begin, double* const end ) const = 0;
@@ -90,6 +91,8 @@ struct Base {
 	virtual void Iterate( Random::Generator::LaggedFibonacci4<>& generator ) = 0;
 
 	virtual void Recalculate() = 0;
+
+	virtual void CalculateNormSquared();
 
 
 private:

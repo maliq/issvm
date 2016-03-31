@@ -69,11 +69,33 @@ unsigned int const Base::Support() const {
 	return support;
 }
 
+double const Base::L1Norm() const {
+
+	double l1norm = 0.0;
+	unsigned int const size = this->TrainingSize();
+	boost::shared_array< double > alphas( new double[ size ] );
+	this->GetAlphas( alphas.get(), alphas.get() + size );
+
+	{	double const* ii    = alphas.get();
+		double const* iiEnd = ii + size;
+		for ( ; ii != iiEnd; ++ii )
+			if ( *ii != 0 )
+				l1norm+=std::abs(*ii);
+	}
+
+	return l1norm;
+}
+
+void Base::CalculateNormSquared(){
+		std::cout << "Calling Calculate NormSquared" << std::endl;
+		std::cout << "This is not doing something useful" << std::endl;
+}
+
 void Base::WriteSupport(std::string filename){
 
-		std::cout << "Calling Get Supp of Optimizer Base" << std::endl;
-		std::cout << "This is not doing something useful" << std::endl;
-		std::cout << "You need to create an specialized function in the specialized Optimizer Class" << std::endl;
+	std::cout << "Calling Get Supp of Optimizer Base" << std::endl;
+	std::cout << "This is not doing something useful" << std::endl;
+	std::cout << "You need to create an specialized function in the specialized Optimizer Class" << std::endl;
 
 }
 
