@@ -1,0 +1,6 @@
+issvm_evaluate
+issvm_initialize
+issvm_optimize
+issvm_recalculate
+*.o
+.idea/
