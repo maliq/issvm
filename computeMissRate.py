@@ -1,5 +1,5 @@
 from sklearn.datasets import load_svmlight_file
-import pylab as plt
+import numpy as np
 import sys
 
 def sign(x):
@@ -12,7 +12,7 @@ def hinge(y1,y2):
 		return 0.0
 	return 1.0-(y1*y2)
 
-predictions = plt.loadtxt(sys.argv[1])
+predictions = np.loadtxt(sys.argv[1])
 data_real = load_svmlight_file(sys.argv[2])
 y = data_real[1]
 
