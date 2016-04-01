@@ -1,6 +1,0 @@
-export LD_LIBRARY_PATH=/home/ricky/boost_1_58_0/stage/lib/
-./../../issvm_initialize -f ../../../IJCNN/ijcnn1.scaled.train.01.txt -o IJCNN_SVM_SMO_BIASED -k gaussian -K 1.0 -a SMO -A 0.0000286 -b 1 
-./../../issvm_optimize -i IJCNN_SVM_SMO_BIASED -o mySVM_NS_SMO_100 -n 100
-./../../issvm_optimize -i IJCNN_SVM_SMO_BIASED -o mySVM_NS_SMO_1000 -n 1000
-./../../issvm_optimize -i IJCNN_SVM_SMO_BIASED -o mySVM_NS_SMO_10000 -n 10000
-./../../issvm_optimize -i IJCNN_SVM_SMO_BIASED -o mySVM_NS_SMO_100000 -n 100000
