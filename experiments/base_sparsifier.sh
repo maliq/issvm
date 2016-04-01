@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-if (("$norms_end" > "0"))
+if (( $(bc <<< "$norms_end > 0") ))
 then
 	i=8
 	#norms[0]=$norms_init
