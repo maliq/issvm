@@ -3,5 +3,6 @@ issvm_initialize
 issvm_optimize
 issvm_recalculate
 issvm_test
+issvm_optimize2
 *.o
 .idea/
