@@ -249,14 +249,21 @@ void Sparsifier::Iterate( Random::Generator::LaggedFibonacci4<>& generator ) {
 	m_normSquared += eta * ( -2 * m_responses[ negativeIndex ] + eta * m_normsSquared[ negativeIndex ] );
 	m_pKernel->SetAlpha( m_alphas.get(), m_responses.get(), negativeIndex, m_alphas[ negativeIndex ] - eta );
 
+	delta_max = eta;
+
 	if ( m_normSquared > m_targetNormSquared ) {
+		delta_max = -std::numeric_limits< double >::infinity();
 
 		double const scale = std::sqrt( m_targetNormSquared / m_normSquared );
 
 		double* pDestination    = m_alphas.get();
 		double* pDestinationEnd = pDestination + trainingSize;
-		for ( ; pDestination != pDestinationEnd; ++pDestination )
+		for ( ; pDestination != pDestinationEnd; ++pDestination ) {
+			double delta = (1.0 - scale) * std::abs(*pDestination);
+			if(delta>delta_max)
+				delta_max = delta;
 			*pDestination *= scale;
+		}
 
 		pDestination    = m_responses.get();
 		pDestinationEnd = pDestination + totalSize;
@@ -265,6 +272,8 @@ void Sparsifier::Iterate( Random::Generator::LaggedFibonacci4<>& generator ) {
 
 		m_normSquared = m_targetNormSquared;
 	}
+
+	//std::cout << m_normSquared << std::endl;
 
 	m_positiveIndex = trainingSize;
 	m_negativeIndex = trainingSize;
