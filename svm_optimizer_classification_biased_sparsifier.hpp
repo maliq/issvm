@@ -123,6 +123,19 @@ struct Sparsifier : public Base {
 
 	virtual void Recalculate();
 
+	double const GetEta() const {
+        return m_eta;
+    }
+
+    double const getSubOptimality() const{
+        return m_targetSuboptimality;
+    }
+
+    double const GetNormSquared() const{
+        return m_targetNormSquared;
+    }
+
+
 
 private:
 
