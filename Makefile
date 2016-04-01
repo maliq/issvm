@@ -14,7 +14,9 @@ TARGET_SOURCES := \
 	issvm_evaluate.cpp \
 	issvm_initialize.cpp \
 	issvm_optimize.cpp \
-	issvm_recalculate.cpp
+	issvm_recalculate.cpp \
+	issvm_test.cpp \
+    issvm_optimize2.cpp
 
 HEADERS := \
 	array_sum.hpp \
@@ -78,7 +80,6 @@ LIBRARIES := \
 	m
 
 BOOST_LIBRARIES := \
-	iostreams \
 	program_options \
 	regex \
 	serialization
