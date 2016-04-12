@@ -116,6 +116,10 @@ int main( int argc, char* argv[] ) {
 			for ( ; (ii<2) || (last_delta_max >= tol); ++ii ){
 				pOptimizer->Iterate( generator );
 				last_delta_max = pOptimizer->GetDeltaMax();
+				if(ii % 10 == 0)
+                    if(boost::shared_ptr<SVM::Optimizer::Classification::Biased::Sparsifier> spacifierOptimizer =
+						   boost::dynamic_pointer_cast<SVM::Optimizer::Classification::Biased::Sparsifier>(pOptimizer))
+                        std::cout << spacifierOptimizer->Objective() << " " << spacifierOptimizer->Support() << " " << last_delta_max << std::endl;
 			}
 			clock_t end = clock();
 			double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
