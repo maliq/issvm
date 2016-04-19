@@ -115,7 +115,7 @@ int main( int argc, char* argv[] ) {
 			unsigned int ii = 0;
 			for ( ; (ii<2) || (last_delta_max >= tol); ++ii ){
 				pOptimizer->Iterate( generator );
-				last_delta_max = pOptimizer->GetDeltaMax();
+				last_delta_max = pOptimizer->GetLastGap();
 				if(ii % 10 == 0)
                     if(boost::shared_ptr<SVM::Optimizer::Classification::Biased::Sparsifier> spacifierOptimizer =
 						   boost::dynamic_pointer_cast<SVM::Optimizer::Classification::Biased::Sparsifier>(pOptimizer))

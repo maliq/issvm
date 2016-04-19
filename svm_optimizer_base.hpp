@@ -62,7 +62,7 @@ struct Base {
 
 	virtual ~Base() = 0;
 
-    double delta_max;
+    double gap;
 	virtual unsigned int const TrainingSize()   const = 0;
 	virtual unsigned int const ValidationSize() const = 0;
 
@@ -94,8 +94,8 @@ struct Base {
 
 	virtual void CalculateNormSquared();
 
-	double GetDeltaMax() {
-        return delta_max;
+	double GetLastGap() {
+        return gap;
     }
 
 private:
@@ -116,7 +116,7 @@ private:
 
 
 Base::Base() {
-    delta_max = 0;
+    gap = 0;
 }
 
 

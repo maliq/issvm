@@ -181,6 +181,8 @@ double const Sparsifier::Evaluate( Random::Generator::LaggedFibonacci4<>& genera
 
 void Sparsifier::Iterate( Random::Generator::LaggedFibonacci4<>& generator ) {
 
+	double old_objective = Objective();
+
 	unsigned int const trainingSize = m_pKernel->TrainingSize();
 	unsigned int const totalSize    = m_pKernel->Size();
 
@@ -249,7 +251,7 @@ void Sparsifier::Iterate( Random::Generator::LaggedFibonacci4<>& generator ) {
 	m_normSquared += eta * ( -2 * m_responses[ negativeIndex ] + eta * m_normsSquared[ negativeIndex ] );
 	m_pKernel->SetAlpha( m_alphas.get(), m_responses.get(), negativeIndex, m_alphas[ negativeIndex ] - eta );
 
-	delta_max = eta;
+	double delta_max = eta;
 
 	if ( m_normSquared > m_targetNormSquared ) {
 		delta_max = -std::numeric_limits< double >::infinity();
@@ -279,6 +281,9 @@ void Sparsifier::Iterate( Random::Generator::LaggedFibonacci4<>& generator ) {
 	m_negativeIndex = trainingSize;
 	m_positiveKappa = std::numeric_limits< double >::quiet_NaN();
 	m_negativeKappa = std::numeric_limits< double >::quiet_NaN();
+
+	double new_objective = Objective();
+	gap = std::abs((old_objective - new_objective)/old_objective);
 }
 
 
