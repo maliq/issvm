@@ -113,10 +113,14 @@ int main( int argc, char* argv[] ) {
 			double last_delta_max = std::numeric_limits<double>::infinity();
 			clock_t begin = clock();
 			unsigned int ii = 0;
-			for ( ; (ii<2) || (last_delta_max >= tol); ++ii ){
+            unsigned int MAX_ITE = 100000;
+            std::string last_iterations="";
+			for ( ; ((ii<2) || (last_delta_max >= tol)) && ii < MAX_ITE; ++ii ){
 				pOptimizer->Iterate( generator );
 				last_delta_max = pOptimizer->GetLastGap();
-				if(ii % 10 == 0)
+                if(ii >= MAX_ITE - 10)
+                    last_iterations += ";" + std::to_string(last_delta_max);
+				if(0 && ii % 1 == 0)
                     if(boost::shared_ptr<SVM::Optimizer::Classification::Biased::Sparsifier> spacifierOptimizer =
 						   boost::dynamic_pointer_cast<SVM::Optimizer::Classification::Biased::Sparsifier>(pOptimizer))
                         std::cout << spacifierOptimizer->Objective() << " " << spacifierOptimizer->Support() << " " << last_delta_max << std::endl;
@@ -145,7 +149,7 @@ int main( int argc, char* argv[] ) {
 				std::ofstream statsFile( stats.c_str(), std::ios_base::app );
 				if ( statsFile.fail() )
 					throw std::runtime_error( "Unable to open stats file" );
-				statsFile << output << ";" << values.str() << ";" << ii << ";" << elapsed_secs<< ";" << tol << std::endl;
+				statsFile << output << ";" << values.str() << ";" << ii << ";" << elapsed_secs<< ";" << tol << last_iterations << std::endl;
 			}
 
 			pOptimizer->WriteSupport(output+"-SupportSet.txt");
