@@ -23,10 +23,11 @@ then
 fi
 
 declare -a epsilons=(0.0625 0.125 0.25 0.5 1.0)
+declare -a TOLs=(0.01 0.001 0.0001 0.00001)
 declare -a etas=(0.00390625 0.015625 0.0625 0.25 1.0 4.0 16.0)
 
-EPSILON=0.5
-TOL=0.0000001
+EPSILON=INF
+#TOL=0.0001
 
 #initialized and executing sparcifier
 if [ "$1" == "optimize" ]; then
@@ -36,27 +37,30 @@ if [ "$1" == "optimize" ]; then
 	
 	for NORM in "${norms[@]}"
 	do
-		for ETA in "${etas[@]}"
-		do
-			if [ ! -f $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init ]; then
-				#echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
-				issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON
-			fi
-		done
+	    for TOL in "${TOLs[@]}"
+	    do
+            for ETA in "${etas[@]}"
+            do
+                if [ ! -f $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init ]; then
+                    #echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
+                    issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
+                fi
+            done
 
-		SECONDS=0
-		start='date +%s'
-		for ETA in "${etas[@]}"
-		do
-			if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_$ITERATIONS ]; then
-				echo "issvm_optimize -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_$ITERATIONS -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}"
-				issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_$ITERATIONS -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}
-			fi
-		done
-		duration=$SECONDS
-		now=$(date +'%Y-%m-%d %H:%M:%S')
-		echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
-		
+            SECONDS=0
+            start='date +%s'
+            for ETA in "${etas[@]}"
+            do
+                if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_$ITERATIONS ]; then
+                    echo "issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}"
+                    issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL} &
+                fi
+            done
+            wait
+            duration=$SECONDS
+            now=$(date +'%Y-%m-%d %H:%M:%S')
+            echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
+         done
 	done
 fi
 

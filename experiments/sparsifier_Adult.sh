@@ -1,6 +1,8 @@
 #!/bin/bash
-dataset_dir=/home/ricky/Cotter-Code
-calculate_error=/home/ricky/Cotter-Code/issvm/computeMissRate.py
+#dataset_dir=/home/ricky/Cotter-Code
+#calculate_error=/home/ricky/Cotter-Code/issvm/computeMissRate.py
+dataset_dir=..
+calculate_error=${dataset_dir}/issvm/computeMissRate.py
 
 METHOD=sparsifier
 DATASET=Adult
