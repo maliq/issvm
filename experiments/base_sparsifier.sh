@@ -36,7 +36,7 @@ EPSILON=INF
 
 #initialized and executing sparcifier
 if [ "$1" == "optimize" ]; then
-    job_pool_init 3 0
+    job_pool_init 7 0
 	if [ "$2" != "" ]; then
 		norms=(${norms[${2}]})
 	fi
@@ -49,7 +49,7 @@ if [ "$1" == "optimize" ]; then
             do
                 if [ ! -f $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init ]; then
                     #echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
-                    job_pool_run issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
+                    issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
                 fi
             done
 
@@ -57,7 +57,7 @@ if [ "$1" == "optimize" ]; then
             start='date +%s'
             for ETA in "${etas[@]}"
             do
-                if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_$ITERATIONS ]; then
+                if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} ]; then
                     echo "issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}"
                     job_pool_run issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}
                 fi
