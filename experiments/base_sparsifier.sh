@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 if (( $(bc <<< "$norms_end > 0") ))
 then
 	i=8
@@ -26,11 +27,16 @@ declare -a epsilons=(0.0625 0.125 0.25 0.5 1.0)
 declare -a TOLs=(0.01 0.001 0.0001 0.00001)
 declare -a etas=(0.00390625 0.015625 0.0625 0.25 1.0 4.0 16.0)
 
+. ../issvm/experiments/job_pool.sh
+
+
+
 EPSILON=INF
 #TOL=0.0001
 
 #initialized and executing sparcifier
 if [ "$1" == "optimize" ]; then
+    job_pool_init 3 0
 	if [ "$2" != "" ]; then
 		norms=(${norms[${2}]})
 	fi
@@ -43,7 +49,7 @@ if [ "$1" == "optimize" ]; then
             do
                 if [ ! -f $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init ]; then
                     #echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
-                    issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
+                    job_pool_run issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
                 fi
             done
 
@@ -53,15 +59,19 @@ if [ "$1" == "optimize" ]; then
             do
                 if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_$ITERATIONS ]; then
                     echo "issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}"
-                    issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL} &
+                    job_pool_run issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}
                 fi
             done
-            wait
+            #wait
             duration=$SECONDS
             now=$(date +'%Y-%m-%d %H:%M:%S')
-            echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
+#            echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
          done
 	done
+	job_pool_shutdown
+
+    # check the $job_pool_nerrors for the number of jobs that exited non-zero
+    echo "job_pool_nerrors: ${job_pool_nerrors}"
 fi
 
 
