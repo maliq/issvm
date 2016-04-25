@@ -158,7 +158,7 @@ if [ "$1" == "ttol" ]; then
         mean_sv=$(echo "scale=1; ${sum_sv}/10" | bc -l)
         mean_test_error=$(echo "scale=5; ${sum_test_error}/10" | bc -l)
         #echo $mean_sv $mean_test_error "0 0"
-        echo "${NORM};${mean_sv};${mean_test_error}" >> ${DATASET}_${TOL}_test.txt
+        echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_${TOL}_test.txt
         done
     done
 fi
