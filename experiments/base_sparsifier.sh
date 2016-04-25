@@ -120,7 +120,7 @@ fi
 
 if [ "$1" == "ttol" ]; then
 	if [ "$2" != "" ]; then
-		TOL=(${TOLs[${2}]})
+		TOLs=(${TOLs[${2}]})
 	fi
 
     for TOL in "${TOLs[@]}"
