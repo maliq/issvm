@@ -120,7 +120,7 @@ fi
 
 if [ "$1" == "ttol" ]; then
 	if [ "$2" != "" ]; then
-		norms=(${TOLs[${2}]})
+		TOL=(${TOLs[${2}]})
 	fi
 
     for TOL in "${TOLs[@]}"
@@ -134,7 +134,7 @@ if [ "$1" == "ttol" ]; then
             BEST_ERROR=1
                 for ETA in "${etas[@]}"
                 do
-                    #echo "issvm_evaluate -f $dataset_dir/$TRAIN_DATA -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -o $TEST_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS}_train.predited"
+                    #echo "issvm_test -f $dataset_dir/${VAL_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL}"
                     OUTPUT="$(issvm_test -f $dataset_dir/${VAL_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL})"
                     #echo $OUTPUT
                     arrIN=(${OUTPUT})
