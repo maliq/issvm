@@ -91,7 +91,7 @@ if [ "$OP" == "optimize" ]; then
     . ../issvm/experiments/job_pool.sh
     job_pool_init 7 0
 	
-    for EPSILON in "${epsilons}"
+    for EPSILON in "${epsilons[@]}"
     do
 	for TOL in "${TOLs[@]}"
 	do
