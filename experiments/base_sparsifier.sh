@@ -100,8 +100,13 @@ if [ "$OP" == "optimize" ]; then
             for ETA in "${etas[@]}"
             do
                 if [ ! -f $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init ]; then
+                if [ "$ETA" == "INF" ]; then
+                    #echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA"
+                    issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
+                else
                     #echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
                     issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON
+                fi
                 fi
             done
 
@@ -176,6 +181,8 @@ if [ "$OP" == "ttol" ]; then
         sum_sv=0
         for ((i=1;i<=10;i++)); do
             BEST_ERROR=1
+                for EPSILON in "${epsilons[@]}"
+                do
                 for ETA in "${etas[@]}"
                 do
                     #echo "issvm_test -f $dataset_dir/${VAL_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL}"
@@ -183,16 +190,17 @@ if [ "$OP" == "ttol" ]; then
                     #echo $OUTPUT
                     arrIN=(${OUTPUT})
                     #echo ${arrIN[2]} $ETA
-                    echo "${NORM};${ETA};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_${TOL}_validation.txt
+                    echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_${TOL}_validation.txt
                     if (( $(bc <<< "${arrIN[2]} < $BEST_ERROR") ))
                     then
                         BEST_ERROR=${arrIN[2]}
                         BEST_ETA=$ETA
-                        BEST_TOL=$TOL
+                        BEST_EPSILON=$EPSILON
                     fi
                 done
+                done
 
-            OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${EPSILON}_BIASED_${BEST_TOL})"
+            OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${$BEST_EPSILON}_BIASED_${TOL})"
             arrIN=(${OUTPUT})
             test_error=${arrIN[2]}
             #echo "${arrIN[1]} $test_error ${BEST_ETA} ${BEST_TOL}"
@@ -202,7 +210,11 @@ if [ "$OP" == "ttol" ]; then
         mean_sv=$(echo "scale=1; ${sum_sv}/10" | bc -l)
         mean_test_error=$(echo "scale=5; ${sum_test_error}/10" | bc -l)
         #echo $mean_sv $mean_test_error "0 0"
-        echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_${TOL}_test.txt
+        if [ "$ETA" == "INF" ]; then
+            echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_${TOL}_test.txt
+        else
+            echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_${TOL}_AGGRESSIVE_test.txt
+        fi
         done
     done
 fi
