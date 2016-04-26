@@ -200,7 +200,7 @@ if [ "$OP" == "ttol" ]; then
                 done
                 done
 
-            OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${$BEST_EPSILON}_BIASED_${TOL})"
+            OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${BEST_EPSILON}_BIASED_${TOL})"
             arrIN=(${OUTPUT})
             test_error=${arrIN[2]}
             #echo "${arrIN[1]} $test_error ${BEST_ETA} ${BEST_TOL}"
