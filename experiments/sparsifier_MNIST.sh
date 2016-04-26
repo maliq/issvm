@@ -18,4 +18,4 @@ K=0.02
 declare -a norms=(24.13 8050.47)
 norms_init=2.15
 norms_end=1800.7
-. base_sparsifier.sh ${1} ${2}
+. base_sparsifier.sh "$@"

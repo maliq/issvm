@@ -18,4 +18,4 @@ K=1.0
 declare -a norms=(38.72 71.47 131.61 230.26 421.38 880.83 2074.61 5043.84 10305.4 12044.6)
 norms_init=38.72
 norms_end=0
-. base_sparsifier.sh ${1} ${2}
+. base_sparsifier.sh "$@"

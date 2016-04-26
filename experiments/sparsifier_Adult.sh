@@ -19,4 +19,4 @@ K=0.1
 #NORM=8.95435e-08
 norms_init=15.01
 norms_end=1061.1
-. base_sparsifier.sh ${1} ${2}
+. base_sparsifier.sh "$@"

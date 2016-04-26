@@ -27,29 +27,81 @@ declare -a epsilons=(0.0625 0.125 0.25 0.5 1.0)
 declare -a TOLs=(0.01 0.001 0.0001 0.00001)
 declare -a etas=(0.00390625 0.015625 0.0625 0.25 1.0 4.0 16.0)
 
-. ../issvm/experiments/job_pool.sh
 
 
 
-EPSILON=INF
-#TOL=0.0001
+usage()
+{
+cat << EOF
+usage: $0 options
+
+This script run the test1 or test2 over a machine.
+
+OPTIONS:
+   -h      Show this message
+   -t      tolerance
+   -e      epsilon
+   -v      Verbose
+EOF
+}
+
+OPTIND=1
+OP=
+while getopts "ht:e:n:o:v" OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         t)
+             TOLs=(${TOLs[${OPTARG}]})
+             echo "set t: ${TOLs}"
+             ;;
+         e)
+             epsilons=($OPTARG)
+             echo "set e: $OPTARG"
+             ;;
+         n)
+             norms=(${norms[${OPTARG}]})
+             echo "set n: ${norms}"
+             ;;
+         o)
+             OP=${OPTARG}
+             echo "set op: ${OPTARG}"
+             ;;
+         v)
+             VERBOSE=1
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+if [[ -z $OP ]]
+then
+     usage
+fi
+
 
 #initialized and executing sparcifier
-if [ "$1" == "optimize" ]; then
+if [ "$OP" == "optimize" ]; then
+    . ../issvm/experiments/job_pool.sh
     job_pool_init 7 0
-	if [ "$2" != "" ]; then
-		norms=(${norms[${2}]})
-	fi
 	
-	for NORM in "${norms[@]}"
+    for EPSILON in "${epsilons}"
+    do
+	for TOL in "${TOLs[@]}"
 	do
-	    for TOL in "${TOLs[@]}"
+	    for NORM in "${norms[@]}"
 	    do
             for ETA in "${etas[@]}"
             do
                 if [ ! -f $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init ]; then
-                    #echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
-                    issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
+                    echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predited -A $NORM -A $ETA -A $EPSILON"
+                    #issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA #-A $EPSILON
                 fi
             done
 
@@ -59,7 +111,7 @@ if [ "$1" == "optimize" ]; then
             do
                 if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} ]; then
                     echo "issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}"
-                    job_pool_run issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}
+                    #job_pool_run issvm_optimize2 -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} -s ${METHOD}/${DATASET}_sparsifier_stats.txt -t ${TOL}
                 fi
             done
             #wait
@@ -68,6 +120,7 @@ if [ "$1" == "optimize" ]; then
 #            echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
          done
 	done
+	done
 	job_pool_shutdown
 
     # check the $job_pool_nerrors for the number of jobs that exited non-zero
@@ -75,14 +128,9 @@ if [ "$1" == "optimize" ]; then
 fi
 
 
-if [ "$1" == "test" ]; then
-	if [ "$2" != "" ]; then
-		norms=(${norms[${2}]})
-	fi
-
+if [ "$OP" == "test" ]; then
 	for NORM in "${norms[@]}"
     do
-	#NORM=${norms[${2}]}
 	sum_test_error=0
 	sum_sv=0
 	for ((i=1;i<=10;i++)); do
@@ -118,11 +166,7 @@ if [ "$1" == "test" ]; then
 fi
 
 
-if [ "$1" == "ttol" ]; then
-	if [ "$2" != "" ]; then
-		TOLs=(${TOLs[${2}]})
-	fi
-
+if [ "$OP" == "ttol" ]; then
     for TOL in "${TOLs[@]}"
 	    do
         for NORM in "${norms[@]}"
