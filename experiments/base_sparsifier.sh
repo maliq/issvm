@@ -87,7 +87,7 @@ fi
 
 
 #initialized and executing sparcifier
-if [ "$OP" == "optimize" ]; then
+if [ "$OP" == "optimize2" ]; then
     . ../issvm/experiments/job_pool.sh
     job_pool_init 7 0
 	
@@ -130,6 +130,33 @@ if [ "$OP" == "optimize" ]; then
 
     # check the $job_pool_nerrors for the number of jobs that exited non-zero
     echo "job_pool_nerrors: ${job_pool_nerrors}"
+fi
+
+#initialized and executing optimize sparsifier
+if [ "$OP" == "optimize" ]; then
+    EPSILON=0.5
+    for NORM in "${norms[@]}"
+    do
+        for ETA in "${etas[@]}"
+        do
+            #issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON
+            echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON"
+        done
+
+        SECONDS=0
+        start='date +%s'
+        for ETA in "${etas[@]}"
+        do
+#            if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} ]; then
+                echo "issvm_optimize -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -n ${ITERATIONS}"
+                #issvm_optimize -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -n ${ITERATIONS}
+#            fi
+        done
+        #wait
+        duration=$SECONDS
+        now=$(date +'%Y-%m-%d %H:%M:%S')
+        echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
+     done
 fi
 
 
