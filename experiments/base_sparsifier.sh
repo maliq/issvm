@@ -199,17 +199,18 @@ fi
 
 
 if [ "$OP" == "ttol" ]; then
+    epsilonLen=${#epsilons[@]}
     for TOL in "${TOLs[@]}"
 	    do
         for NORM in "${norms[@]}"
         do
-        #NORM=${norms[${2}]}
         sum_test_error=0
         sum_sv=0
         for ((i=1;i<=10;i++)); do
             BEST_ERROR=1
-                for EPSILON in "${epsilons[@]}"
-                do
+            BEST_SV=0
+            for EPSILON in "${epsilons[@]}"
+            do
                 for ETA in "${etas[@]}"
                 do
                     #echo "issvm_test -f $dataset_dir/${VAL_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL}"
@@ -217,16 +218,27 @@ if [ "$OP" == "ttol" ]; then
                     #echo $OUTPUT
                     arrIN=(${OUTPUT})
                     #echo ${arrIN[2]} $ETA
-                    echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_${TOL}_validation.txt
                     if (( $(bc <<< "${arrIN[2]} < $BEST_ERROR") ))
                     then
                         BEST_ERROR=${arrIN[2]}
-                        BEST_ETA=$ETA
-                        BEST_EPSILON=$EPSILON
+                        BEST_ETA=${ETA}
+                        BEST_EPSILON=${EPSILON}
+                        BEST_SV=${arrIN[1]}
                     fi
-                done
-                done
-
+                    if [ ${epsilonLen} == 1 ]; then
+#                        echo "${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt"
+                        echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
+                    else
+#                        echo "${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt"
+                        echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
+                    fi
+#                done
+            done
+            if [ ${epsilonLen} == 1 ]; then
+                echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};****" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
+            else
+                echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};****" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
+            fi
             OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${BEST_EPSILON}_BIASED_${TOL})"
             arrIN=(${OUTPUT})
             test_error=${arrIN[2]}
@@ -237,10 +249,13 @@ if [ "$OP" == "ttol" ]; then
         mean_sv=$(echo "scale=1; ${sum_sv}/10" | bc -l)
         mean_test_error=$(echo "scale=5; ${sum_test_error}/10" | bc -l)
         #echo $mean_sv $mean_test_error "0 0"
-        if [ "$ETA" == "INF" ]; then
-            echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_${TOL}_test.txt
+
+        if [ ${epsilonLen} == 1 ]; then
+#            echo "${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_test.txt"
+            echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_test.txt
         else
-            echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_${TOL}_AGGRESSIVE_test.txt
+#            echo "${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_test.txt"
+            echo "${NORM};${mean_sv};${mean_test_error}" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_test.txt
         fi
         done
     done
