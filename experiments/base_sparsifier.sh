@@ -139,7 +139,7 @@ if [ "$OP" == "optimize" ]; then
     do
         for ETA in "${etas[@]}"
         do
-            #issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON
+            issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON
             echo "issvm_initialize -f $dataset_dir/$TRAIN_DATA -o $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -k gaussian -K $K -b 1 -a $METHOD -A issvm_error/${DATASET}_SVM_SMO_BIASED_100000_train.predicted -A $NORM -A $ETA -A $EPSILON"
         done
 
@@ -149,10 +149,10 @@ if [ "$OP" == "optimize" ]; then
         do
 #            if [ ! -f $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL} ]; then
                 echo "issvm_optimize -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -n ${ITERATIONS}"
-                #issvm_optimize -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -n ${ITERATIONS}
+                issvm_optimize -i $INIT_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED.init -o $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -n ${ITERATIONS} &
 #            fi
         done
-        #wait
+        wait
         duration=$SECONDS
         now=$(date +'%Y-%m-%d %H:%M:%S')
         echo " ***  [${now}] sparcifier with norm ${NORM} completed in $(($duration / 60))m:$(($duration % 60))s *** "
@@ -167,12 +167,12 @@ if [ "$OP" == "test" ]; then
 	sum_sv=0
 	for ((i=1;i<=10;i++)); do
 		BEST_ERROR=1
-		for TOL in "${TOLs[@]}"
-	    do
+		#for TOL in "${TOLs[@]}"
+	    #do
             for ETA in "${etas[@]}"
             do
                 #echo "issvm_evaluate -f $dataset_dir/$TRAIN_DATA -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS} -o $TEST_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS}_train.predited"
-                OUTPUT="$(issvm_test -f $dataset_dir/${VAL_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${TOL})"
+                OUTPUT="$(issvm_test -f $dataset_dir/${VAL_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${ETA}_EP-${EPSILON}_BIASED_${ITERATIONS})"
                 #echo $OUTPUT
                 arrIN=(${OUTPUT})
                 #echo ${arrIN[2]} $ETA
@@ -180,14 +180,14 @@ if [ "$OP" == "test" ]; then
                 then
                     BEST_ERROR=${arrIN[2]}
                     BEST_ETA=$ETA
-                    BEST_TOL=$TOL
+                    #BEST_TOL=$TOL
                 fi
             done
-        done
-		OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${EPSILON}_BIASED_${BEST_TOL})"
+        #done
+		OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${EPSILON}_BIASED_${ITERATIONS})"
 		arrIN=(${OUTPUT})
 		test_error=${arrIN[2]}
-		#echo "${arrIN[1]} $test_error ${BEST_ETA}"
+		echo "${arrIN[1]} $test_error ${BEST_ETA}"
 		sum_test_error=$(echo "scale=5; $test_error+$sum_test_error" | bc -l)
 		sum_sv=$(echo "${arrIN[1]}+$sum_sv" | bc -l)
 	done
