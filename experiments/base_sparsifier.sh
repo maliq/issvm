@@ -232,7 +232,7 @@ if [ "$OP" == "ttol" ]; then
 #                        echo "${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt"
                         echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
                     fi
-#                done
+                done
             done
             if [ ${epsilonLen} == 1 ]; then
                 echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};****" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
