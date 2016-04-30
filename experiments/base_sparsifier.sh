@@ -47,7 +47,7 @@ EOF
 
 OPTIND=1
 OP=
-while getopts "ht:e:n:o:v" OPTION
+while getopts "ht:T:e:E:n:N:o:v" OPTION
 do
      case $OPTION in
          h)
@@ -58,13 +58,25 @@ do
              TOLs=(${TOLs[${OPTARG}]})
              echo "set t: ${TOLs}"
              ;;
+         T)
+             TOLs=(${OPTARG})
+             echo "set t: ${TOLs}"
+             ;;
          e)
+             epsilons=(${epsilons[${OPTARG}]})
+             echo "set e: $epsilons"
+             ;;
+         E)
              epsilons=($OPTARG)
              echo "set e: $OPTARG"
              ;;
          n)
              norms=(${norms[${OPTARG}]})
              echo "set n: ${norms}"
+             ;;
+         N)
+             norms=(${OPTARG})
+             echo "set nv: ${norms}"
              ;;
          o)
              OP=${OPTARG}
