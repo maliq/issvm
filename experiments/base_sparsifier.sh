@@ -14,10 +14,10 @@ then
 
 	for (( c=i; c>=0; c--))
 	do
-		diff=$(echo "scale=4; $norms_end-$norms_init" | bc -l)
-		mid=$(echo "scale=4; ${diff}/${FACTOR}" | bc -l)
-		norms[c]=$(echo "scale=4; $norms_init+$mid" | bc -l)
-		norms_end=$mid
+		diff=$(echo "scale=4; $norms_end-$norms_init" | bc -l | sed 's/^\./0./')
+		mid=$(echo "scale=4; ${diff}/${FACTOR}" | bc -l | sed 's/^\./0./')
+		norms[c]=$(echo "scale=4; $norms_init+$mid" | bc -l | sed 's/^\./0./')
+		norms_end=${mid}
 #		echo ${norms[c]}
 	done
 fi
