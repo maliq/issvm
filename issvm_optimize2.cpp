@@ -140,9 +140,9 @@ int main( int argc, char* argv[] ) {
             std::stringstream values;
 			if(boost::shared_ptr<SVM::Optimizer::Classification::Biased::Sparsifier> spacifierOptimizer =
                        boost::dynamic_pointer_cast<SVM::Optimizer::Classification::Biased::Sparsifier>(pOptimizer)) {
-                values << spacifierOptimizer->GetNormSquared() << ";"<< spacifierOptimizer->GetEta() << ";" << spacifierOptimizer->getSubOptimality();
+                values << spacifierOptimizer->Support() <<";"<<  spacifierOptimizer->NormSquared() <<";"<<  spacifierOptimizer->GetNormSquared() << ";"<< spacifierOptimizer->GetEta() << ";" << spacifierOptimizer->getSubOptimality();
 			}else{
-                values << ";;";
+                values << ";;;;";
             }
 
 			{
