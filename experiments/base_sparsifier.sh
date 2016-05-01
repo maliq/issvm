@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
 
+#Setup FACTOR if unset with 5
+if [[ -z $FACTOR ]]
+then
+     FACTOR=5
+fi
+
+
 if (( $(bc <<< "$norms_end > 0") ))
 then
 	i=8
-	#norms[0]=$norms_init
 	norms[i+1]=$norms_end
-	#while ((i>=2)); do
-	#	diff=$(echo "scale=2; $norms_end-$norms_init" | bc -l)
-	#	mid2=$(echo "$mid/2" | bc -l)
-	#	norms[i]=$(echo "$norms_init+$mid+$mid2" | bc -l)
-	#	norms[i-1]=$(echo "$norms_init+$mid" | bc -l)
-	#	i=$((i-2))
-	#	norms_end=$mid
-	#done
 
 	for (( c=i; c>=0; c--))
 	do
-		diff=$(echo "scale=2; $norms_end-$norms_init" | bc -l)
-		mid=$(echo "scale=2; $diff/2" | bc -l)
-		norms[c]=$(echo "scale=2; $norms_init+$mid" | bc -l)
+		diff=$(echo "scale=4; $norms_end-$norms_init" | bc -l)
+		mid=$(echo "scale=4; ${diff}/${FACTOR}" | bc -l)
+		norms[c]=$(echo "scale=4; $norms_init+$mid" | bc -l)
 		norms_end=$mid
+#		echo ${norms[c]}
 	done
 fi
+#unset FACTOR to don't use the same in a different dataset
+FACTOR=
 
 declare -a epsilons=(0.0625 0.125 0.25 0.5 1.0)
 declare -a TOLs=(0.01 0.001 0.0001 0.00001)
