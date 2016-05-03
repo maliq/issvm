@@ -15,7 +15,8 @@ INIT_DIR=$METHOD/init
 MODEL_DIR=$METHOD/model
 TEST_DIR=$METHOD/test
 K=0.025
-declare -a norms=(24.13 8050.47)
-norms_init=24.13
+#declare -a norms=(24.13 8050.47)
+norms_init=0
 norms_end=8050.47
+FACTOR=10
 . base_sparsifier.sh "$@"
