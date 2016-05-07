@@ -240,17 +240,17 @@ if [ "$OP" == "ttol" ]; then
                     fi
                     if [ ${epsilonLen} == 1 ]; then
 #                        echo "${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt"
-                        echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
+                        echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]};${arrIN[3]}" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
                     else
 #                        echo "${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt"
-                        echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]}" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
+                        echo "${NORM};${ETA};${EPSILON};${i};${arrIN[1]};${arrIN[2]};${arrIN[3]}" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
                     fi
                 done
             done
             if [ ${epsilonLen} == 1 ]; then
-                echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};****" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
+                echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};0;****" >> ${METHOD}/${DATASET}_EP-${EPSILON}_TOL-${TOL}_validation.txt
             else
-                echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};****" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
+                echo "${NORM};${BEST_ETA};${BEST_EPSILON};${i};${BEST_SV};${BEST_ERROR};0;****" >> ${METHOD}/${DATASET}_TOL-${TOL}_AGGRESSIVE_validation.txt
             fi
             OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i $MODEL_DIR/${DATASET}_SVM_${METHOD}_NORM-${NORM}_ETA-${BEST_ETA}_EP-${BEST_EPSILON}_BIASED_${TOL})"
             arrIN=(${OUTPUT})
