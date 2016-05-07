@@ -50,7 +50,7 @@ double sign(double x){
 		return -1;
 }
 
-double miss_loss(boost::shared_ptr< SVM::Optimizer::Base > pOptimizer, std::string testingFilename){
+double miss_loss(boost::shared_ptr< SVM::Optimizer::Base > pOptimizer, std::string testingFilename, double& elapsed_secs){
 	std::vector< SparseVector< float > > vectors;
 	std::vector< double > labels;
 	LoadDataset( testingFilename.c_str(), vectors, labels );
@@ -59,13 +59,14 @@ double miss_loss(boost::shared_ptr< SVM::Optimizer::Base > pOptimizer, std::stri
 
 	Random::Generator::LinearCongruential<> seedGenerator;
 	seedGenerator.Seed();
-
+	clock_t begin;
 	boost::shared_array< double > classifications( new double[ size ] );
 	#pragma omp parallel
 	{	Random::Generator::LaggedFibonacci4<> generator;
 	#pragma omp critical
 		generator.Seed( seedGenerator );
 
+		begin = clock();
 	#pragma omp for schedule( static )
 		for ( int ii = 0; ii < static_cast< int >( size ); ++ii )
 			classifications[ ii ] = pOptimizer->Evaluate( generator, vectors[ ii ] );
@@ -82,6 +83,8 @@ double miss_loss(boost::shared_ptr< SVM::Optimizer::Base > pOptimizer, std::stri
 			//outputFile << classifications[ii] << std::endl;
 		}
 		double miss_loss = float(mistakes)/float(size);
+		clock_t end = clock();
+		elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 		return miss_loss;
 
 		//outputFile.close();
@@ -145,23 +148,12 @@ int main( int argc, char* argv[] ) {
 				inputArchive >> pOptimizer;
 			}
 
-			/*if(0)
-				std::cout << miss_loss(pOptimizer, testingFilename) << std::endl;
-			else {
-				double sum_miss_loss = 0;
-				for (int i = 1; i <= 10; i++) {
-					std::string testingFilenameIt = testingFilename + std::to_string(i);
-					//std::cout << testingFilenameIt << std::endl;
-					double missIt= miss_loss(pOptimizer, testingFilenameIt);
-					sum_miss_loss += missIt;
-					//std::cout << missIt << std::endl;
-				}
-			}*/
-
-			double miss_loss_error = miss_loss(pOptimizer, testingFilename);
+			double elapsed_secs;
+			double miss_loss_error = miss_loss(pOptimizer, testingFilename, elapsed_secs);
 			std::cout << input << std::endl;
 			std::cout << pOptimizer->Support() << " ";
 			std::cout << miss_loss_error << " ";
+			std::cout << elapsed_secs << " ";
 			std::cout << 0 << " ";
 			std::cout << pOptimizer->L1Norm() << std::endl;
 
