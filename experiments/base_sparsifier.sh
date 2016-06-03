@@ -210,6 +210,24 @@ if [ "$OP" == "test" ]; then
 	done
 fi
 
+if [ "$OP" == "tsmo" ]; then
+    sum_test_error=0
+    sum_sv=0
+    for ((i=1;i<=10;i++)); do
+        BEST_ERROR=1
+        BEST_SV=0
+        OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i result/${DATASET}_SVM_SMO_BIASED_1000000)"
+        arrIN=(${OUTPUT})
+        test_error=${arrIN[2]}
+        echo "${arrIN[1]} $test_error"
+        sum_test_error=$(echo "scale=5; $test_error+$sum_test_error" | bc -l)
+        sum_sv=$(echo "${arrIN[1]}+$sum_sv" | bc -l)
+    done
+    mean_sv=$(echo "scale=1; ${sum_sv}/10" | bc -l)
+    mean_test_error=$(echo "scale=5; ${sum_test_error}/10" | bc -l)
+    echo $mean_sv $mean_test_error "0 0"
+fi
+
 
 if [ "$OP" == "ttol" ]; then
     epsilonLen=${#epsilons[@]}
