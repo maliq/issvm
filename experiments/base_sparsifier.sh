@@ -216,8 +216,8 @@ if [ "$OP" == "tsmo" ]; then
     for ((i=1;i<=10;i++)); do
         BEST_ERROR=1
         BEST_SV=0
-        echo "$issvm_test -f $dataset_dir/${TEST_DATA}${i} -i result/${DATASET}_SVM_SMO_BIASED_1000000"
-        OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i result/${DATASET}_SVM_SMO_BIASED_1000000)"
+        echo "$issvm_test -f $dataset_dir/${TEST_DATA}${i} -i result/${DATASET}_SVM_SMO_BIASED_100000"
+        OUTPUT="$(issvm_test -f $dataset_dir/${TEST_DATA}${i} -i result/${DATASET}_SVM_SMO_BIASED_100000)"
         arrIN=(${OUTPUT})
         test_error=${arrIN[2]}
         echo "${arrIN[1]} $test_error"
